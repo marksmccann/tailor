@@ -5,10 +5,12 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "build": "cd packages/typescript-to-docs && npm run build",
+    "build": "lerna run build",
+    "commit": "cz",
     "format": "npx prettier . --write",
     "lint": "eslint .",
-    "test": "vitest"
+    "test": "vitest",
+    "prepare": "husky"
   },
   "author": "Mark McCann",
   "license": "MIT",
@@ -16,12 +18,22 @@
     "packages/*"
   ],
   "devDependencies": {
+    "@commitlint/cli": "^19.7.1",
+    "@commitlint/config-conventional": "^19.7.1",
+    "commitizen": "^4.3.1",
+    "cz-conventional-changelog": "^3.3.0",
     "eslint": "^8.57.0",
     "eslint-plugin-vitest": "^0.5.4",
     "globals": "^15.14.0",
+    "husky": "^9.1.7",
     "lerna": "^8.1.9",
     "prettier": "3.4.2",
     "typescript-eslint": "^8.22.0",
     "vitest": "^3.0.4"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
   }
 }

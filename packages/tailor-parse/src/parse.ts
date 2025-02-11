@@ -1,9 +1,11 @@
 
+/* eslint-disable */
+
 import ts from "typescript";
 
 // import parseJSDoc from "./parseJSDoc";
 // import getExportType from "./getExportType";
-import { Entity, FunctionType, LiteralType } from "./types";
+import { Entity } from "./types";
 import parseVariableStatement from "./parseVariableStatement";
 
 export default function parse(sourceText: string) {

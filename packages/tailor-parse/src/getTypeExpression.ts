@@ -32,13 +32,9 @@ export default function getTypeExpression(node: ts.TypeNode): string {
         typeExpression = "unknown";
     } else if (node.kind === ts.SyntaxKind.VoidKeyword) {
         typeExpression = "void";
-
-        // Union
     } else if (node.kind === ts.SyntaxKind.UnionType) {
         const unionType = node as ts.UnionTypeNode;
         typeExpression = unionType.types.map(getTypeExpression).join("|");
-
-        // Other
     } else if (node !== undefined) {
         console.error(`Unknown type expression: ${node.kind}`);
     }
