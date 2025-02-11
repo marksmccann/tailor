@@ -1,0 +1,78 @@
+Name: Tailor
+
+- Effortlessly write customized documentation with information extracted dynamically from source files.
+- Create custom documentation for your project with information extracted dynamically from it.
+- Custom-made documentation powered by dynamic information extracted from the source
+- Custom-made documentation has never been this easy
+- Taking the manual effort out of "custom-made"
+- Taking "hand" out of Handcrafted documentation
+- Giving you a hand in creating handcrafted documentation
+- The world's first made-to-order plus auto generated documentation tool
+* Generate customized documentation for your project, with your project
+- Use yout project to generate custom docs about your project
+
+`Tailor` uses your project's own source code to help you inject details about
+them into existing documentation. It does this by leveraging 
+TypeScript's AST parser and JSDoc annotations to derive information such as
+names, descriptions, types, and much more. You can target precise sections of
+your documentation by using `Tailor`'s custom templating system ...
+
+information that will never all out-of-sync with its source
+
+`Tailor` uses a custom templating engine to inject dynamic information derived
+from your project's source files into a target file.
+
+Include details about your project where you want them, how you want them, and ...
+
+Effortlessly include details about your project anywhere you want them, that
+will always stay in sync 
+
+This allows you to effortlessly
+include information about your software directly from the source. 
+
+With the use of an AST compiler and JSDoc annotated 
+... with information derived from an AST compiler and JSDoc annotations.
+
+Auto-generated JSDoc sites are easy to generate, but they offer generic designs and limited
+customizability. On the other hand, handcrafted documentation offers limitless customization but
+is cumbersome and often requires duplication. `Tailor` was created in an attempt to sieze the
+benefits of both approaches.
+
+- Source files supported: '.ts', '.tsx', '.js', '.jsx', '.mjs', '.cjs'
+- Target files supported: '.md', 'html', 'xml', '.mdx'
+
+typescript-to-docs
+transdocify
+metamorphadocs
+transdocify
+morphadocs
+typescript-to-docs, extract-docs, transdocify-core
+typescript-to-markdown, transdocify-cli
+autodocs
+easydocs
+customdocs
+Tailoredocs
+tailor
+
+Package 1:
+- Name: tailoredocs-core
+- Description: Derive documentation information from source code
+- Input: Source js files
+- Output: Data structure representing exports from file
+- Platform: Node
+
+Package 2:
+- Name: tailoredocs-template
+- Description: A fully customizable templating system for injecting content into static files.
+- Input: Target md files
+- Output: Updates file with content
+- Platform: CLI
+- Command: ts2md (e.g. npx ts2md docs/*.md)
+
+Package 3:
+- Name: tailoredocs-cli
+- Description: A commandline interface for injecting documentation information into static files.
+
+Potential Dependencies:
+- typescript
+- typescript-walk

@@ -1,0 +1,94 @@
+--------------- FUNCTION -----------------
+
+/**
+ * Function description.
+ * @param {object} param1 Param description
+ * @param {object} param2 Param description
+ * @returns {boolean} Return description
+ */
+function someFunction (param1 param2) {}
+export default someFunction
+
+<!-- ::import someFunction from 'path/to/file' --> // <-- explictly import what is wanted (supports js + jsdoc, ts?)
+
+<!-- ::someFunction._type -->
+function-declaration
+<!-- end:: -->
+
+<!-- ::someFunction.name -->
+someFunction
+<!-- end:: --> // <-- this could be injected on first pass
+
+<!-- ::someFunction.type -->
+someFunction(param1, param2) ⇒ <code>boolean</code>
+<!-- end:: -->
+
+<!-- ::someFunction.description -->
+Function description.
+<!-- end:: -->
+
+<!-- ::someFunction.params -->
+| Param  | Type                | Description       |
+| ------ | ------------------- | ----------------- |
+| param1 | <code>object</code> | Param description |
+| param2 | <code>object</code> | Param description |
+<!-- end:: -->
+
+<!-- ::someFunction.params<rows-only> -->
+| param1 | <code>object</code> | Param description |
+| param2 | <code>object</code> | Param description |
+<!-- end:: -->
+
+<!-- ::someFunction.params<html, rows-only> -->
+<tr><td>param1</td><td><code>object</code></td><td>Param description</td></tr>
+<tr><td>param1</td><td><code>object</code></td><td>Param description</td></tr>
+<!-- end:: -->
+
+<!-- ::someFunction -->
+## someFunction(param1, param2) ⇒ <code>boolean</code>
+
+Function description.
+
+**Returns**: Return description
+**Kind**: Global function
+
+| Parameter  | Type                | Description       |
+| ---------- | ------------------- | ----------------- |
+| param1     | <code>object</code> | Param description |
+| param2     | <code>object</code> | Param description |
+<!-- end:: -->
+
+
+--------------- OBJECT TYPE -----------------
+
+/**
+ * Type description.
+ * @typedef {object} SomeObjectType
+ * @property {object} property1 Property description
+ * @property {object} property2 Property description
+ */
+
+<!-- ::import { SomeObjectType } from 'path/to/file' -->
+
+<!-- ::someFunction._type -->
+typedef-object
+<!-- end:: -->
+
+<!-- ::SomeObjectType.name -->
+SomeObjectType
+<!-- end:: -->
+
+<!-- ::SomeObjectType.type -->
+object
+<!-- end:: -->
+
+<!-- ::SomeObjectType.description -->
+Type description.
+<!-- end:: -->
+
+<!-- ::SomeObjectType.props -->
+| Property  | Type                | Description       |
+| --------- | ------------------- | ----------------- |
+| prop1     | <code>object</code> | Prop description  |
+| prop2     | <code>object</code> | Prop description  |
+<!-- end:: -->

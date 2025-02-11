@@ -1,0 +1,20 @@
+{
+    "name": "tailor-parse",
+    "version": "0.0.0",
+    "description": "Derive documentation information from source code",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "build": "tsx src/index.ts",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Mark McCann",
+    "license": "MIT",
+    "dependencies": {
+        "typescript": "^5.7.3"
+    },
+    "devDependencies": {
+        "@types/node": "^22.10.10",
+        "tsx": "^4.19.2"
+    }
+}

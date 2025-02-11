@@ -1,0 +1,11 @@
+{
+    "name": "tailor-cli",
+    "version": "0.0.0",
+    "description": "Inject tailor-made documentation information into static files",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Mark McCann",
+    "license": "MIT"
+}

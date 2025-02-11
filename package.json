@@ -1,0 +1,27 @@
+{
+  "name": "tailor",
+  "version": "0.0.0",
+  "description": "Generate customized documentation for your project, with your project",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "cd packages/typescript-to-docs && npm run build",
+    "format": "npx prettier . --write",
+    "lint": "eslint .",
+    "test": "vitest"
+  },
+  "author": "Mark McCann",
+  "license": "MIT",
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-vitest": "^0.5.4",
+    "globals": "^15.14.0",
+    "lerna": "^8.1.9",
+    "prettier": "3.4.2",
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^3.0.4"
+  }
+}

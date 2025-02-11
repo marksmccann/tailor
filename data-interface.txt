@@ -1,0 +1,38 @@
+{
+    file: 'path-to-file.js',
+    exports: {
+        default: {
+            _type: 'function-declaration',
+            name: 'someFunction',
+            type: 'someFunction(param1, param2) ⇒ <code>boolean</code>',
+            description: 'Function description.',
+            kind: 'global function',
+            params: [
+                {
+                    name: 'param1',
+                    type: '<code>object</code>',
+                    description: 'Param description',
+                },
+                ...
+            ],
+            returns: {
+                type: 'object',
+                description: 'Return description',
+            },
+        },
+        SomeObjectType: {
+            _type: 'typedef-object',
+            name: 'SomeObjectType',
+            type: 'object',
+            description: 'Type description.',
+            props: [
+                {
+                    name: 'prop1',
+                    type: '<code>object</code>',
+                    description: 'Prop description',
+                },
+                ...
+            ],
+        },
+    }
+}
