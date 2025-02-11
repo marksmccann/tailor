@@ -7,7 +7,7 @@ import isBooleanLiteral from './isBooleanLiteral';
  */
 export interface LiteralDetails {
     kind: 'Literal',
-    type: 'string' | 'number' | 'boolean' | 'unknown',
+    type: 'string' | 'number' | 'boolean' | 'null' | 'unknown' | 'any',
     text: string,
 }
 
@@ -16,8 +16,8 @@ export interface LiteralDetails {
  * @param node The literal node to parse
  * @returns The derived detais
  */
-export default function parseLiteral(node: ts.NumericLiteral | ts.BooleanLiteral | ts.StringLiteral): LiteralDetails {
-    let type: LiteralDetails['type'] = 'unknown';
+export default function parseLiteral(node: ts.NumericLiteral | ts.BooleanLiteral | ts.StringLiteral | ts.NullLiteral): LiteralDetails {
+    let type: LiteralDetails['type'] = 'any';
     let text = '';
 
     if (ts.isStringLiteral(node)) {
@@ -29,6 +29,9 @@ export default function parseLiteral(node: ts.NumericLiteral | ts.BooleanLiteral
     } else if (isBooleanLiteral(node)) {
         type = 'boolean';
         text = String(node.kind === ts.SyntaxKind.TrueKeyword);
+    } else if (node.kind === ts.SyntaxKind.NullKeyword) {
+        type = 'null';
+        text = 'null';
     }
 
     return { kind: 'Literal', type, text };

@@ -19,12 +19,17 @@ export interface FunctionNode extends NodeBase<'Function'> { }
 
 export interface LiteralNode extends NodeBase<'Literal'> { }
 
-export type TailorNode = LiteralNode | FunctionNode | {
+export type DocNode = LiteralNode | FunctionNode | {
     readonly kind: 'Unknown';
 }
 
-export default function parse(sourceText: string): TailorNode[] {
-    const result: TailorNode[] = [];
+/**
+ * Parse the source code to extract relevant documentation nodes.
+ * @param sourceText The source code to parse
+ * @returns The list of nodes parsed from the source code
+ */
+export default function parse(sourceText: string): DocNode[] {
+    const result: DocNode[] = [];
     const sourceFile = ts.createSourceFile(
         '',
         sourceText,
@@ -33,7 +38,7 @@ export default function parse(sourceText: string): TailorNode[] {
     );
 
     ts.forEachChild(sourceFile, (node) => {
-        let tailorNode: TailorNode = { kind: 'Unknown' };
+        let DocNode: DocNode = { kind: 'Unknown' };
         let nodeType: string = 'Unknown';
 
         // Ignore irrelevant node types
@@ -45,23 +50,23 @@ export default function parse(sourceText: string): TailorNode[] {
             const { kind, ...rest } = parseFunctionDeclaration(node);
 
             if (kind === 'NamedFunction') {
-                tailorNode = { ...rest, kind: 'Function' };
+                DocNode = { ...rest, kind: 'Function' };
             }
         } else if (ts.isVariableStatement(node)) {
             const { kind, ...rest } = parseVariableStatement(node);
 
             if (kind === 'Literal') {
-                tailorNode = { ...rest, kind: 'Literal' };
+                DocNode = { ...rest, kind: 'Literal' };
             }
         }
 
-        if (tailorNode.kind === 'Unknown') {
+        if (DocNode.kind === 'Unknown') {
             console.error(`Failed to parse node of type "${nodeType}".`);
             console.log(node);
         }
 
 
-        result.push(tailorNode);
+        result.push(DocNode);
     });
 
     return result;

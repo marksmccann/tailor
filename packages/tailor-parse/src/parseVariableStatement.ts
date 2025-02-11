@@ -2,6 +2,7 @@ import ts from 'typescript';
 
 import parseJSDoc, { JSDocDetails } from './parseJSDoc';
 import getExportType, { ExportType } from './getExportType';
+import getTypeExpression from './getTypeExpression';
 import parseIdentifier, { IdentifierDetails } from './parseIdentifier';
 import parseExpression from './parseExpression';
 
@@ -51,7 +52,12 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
 
     // Primary variable declaration
     if (firstDeclaration) {
-        const { name: variableName, initializer } = firstDeclaration;
+        const { name: variableName, initializer, type: typeAnnotation } = firstDeclaration;
+
+        // Explicit type annotation
+        if (typeAnnotation) {
+            type = getTypeExpression(typeAnnotation);
+        }
 
         // Left-hand side of declaration
         if (ts.isIdentifier(variableName)) {
@@ -66,7 +72,10 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
 
             if (details.kind === 'Literal') {
                 kind = 'Literal';
+            }
 
+            // Derive type from expression if not explicitly annotated
+            if (details.kind === 'Literal' && !type) {
                 if (details.type === 'string') {
                     type = isConstant ? `'${details.text}'` : 'string';
                 } else if (details.type === 'boolean') {

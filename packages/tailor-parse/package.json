@@ -4,16 +4,13 @@
     "description": "Derive documentation information from source code",
     "main": "index.js",
     "type": "module",
-    "scripts": {
-        "build": "tsx src/index.ts"
-    },
+    "scripts": {},
     "author": "Mark McCann",
     "license": "MIT",
     "dependencies": {
         "typescript": "^5.7.3"
     },
     "devDependencies": {
-        "@types/node": "^22.10.10",
-        "tsx": "^4.19.2"
+        "@types/node": "^22.10.10"
     }
 }

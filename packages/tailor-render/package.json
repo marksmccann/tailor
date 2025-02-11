@@ -1,0 +1,13 @@
+{
+    "name": "tailor-render",
+    "version": "0.0.0",
+    "description": "Render documentation information to a static file",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {},
+    "author": "Mark McCann",
+    "license": "MIT",
+    "dependencies": {
+        "tailor-parse": "^0.0.0"
+    }
+}

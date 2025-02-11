@@ -1,11 +1,23 @@
 {
     "name": "tailor-cli",
     "version": "0.0.0",
-    "description": "Inject tailor-made documentation information into static files",
+    "description": "Command-line interface for Tailor",
     "main": "index.js",
+    "type": "module",
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "tsx src/main.ts"
     },
     "author": "Mark McCann",
-    "license": "MIT"
+    "license": "MIT",
+    "bin": {
+        "tailor": "./bin/main.js"
+    },
+    "dependencies": {
+        "commander": "^13.1.0",
+        "glob": "^11.0.1",
+        "tailor-render": "^0.0.0"
+    },
+    "devDependencies": {
+        "tsx": "^4.19.2"
+    }
 }
