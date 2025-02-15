@@ -1,6 +1,6 @@
 import ts from "typescript";
 
-import getTypeExpression from "./getTypeExpression";
+import parseTypeNode from "./parseTypeNode";
 
 /**
  * Details for a `JSDoc` property-like tag (e.g. &#64;property, &#64;argument, &#64;param).
@@ -8,7 +8,7 @@ import getTypeExpression from "./getTypeExpression";
 export interface JSDocPropertyLikeTagDetails {
     name: string;
     optional: boolean;
-    type: string;
+    type: ReturnType<typeof parseTypeNode>;
     description: string;
 }
 
@@ -16,7 +16,7 @@ export interface JSDocPropertyLikeTagDetails {
  * Details for a `JSDoc` &#64;return tag.
  */
 export interface JSDocReturnTagDetails {
-    type: string;
+    type: ReturnType<typeof parseTypeNode>;
     description: string;
 }
 
@@ -59,8 +59,8 @@ export default function parseJSDoc(node: ts.JSDoc): JSDocDetails {
                 console.error("Unknown JSDocDetails deprecated tag comment type");
             }
         } else if (ts.isJSDocReturnTag(tag)) {
+            const returnsType = { text: '' };
             let returnsDescription = "";
-            let returnsType = "";
 
             if (typeof tag.comment === "string") {
                 returnsDescription = tag.comment;
@@ -69,7 +69,8 @@ export default function parseJSDoc(node: ts.JSDoc): JSDocDetails {
             }
 
             if (tag.typeExpression) {
-                returnsType = getTypeExpression(tag.typeExpression.type);
+                const details = parseTypeNode(tag.typeExpression.type);
+                returnsType.text = details.type;
             }
 
             returns = {
@@ -77,7 +78,7 @@ export default function parseJSDoc(node: ts.JSDoc): JSDocDetails {
                 type: returnsType,
             };
         } else if (ts.isJSDocParameterTag(tag) || ts.isJSDocPropertyTag(tag)) {
-            let propertyType = "";
+            let propertyType = { text: '' };
             let propertyName = "";
             let propertyDescription = "";
             const propertyOptional = tag.isBracketed;
@@ -95,7 +96,7 @@ export default function parseJSDoc(node: ts.JSDoc): JSDocDetails {
             }
 
             if (tag.typeExpression) {
-                propertyType = getTypeExpression(tag.typeExpression.type);
+                propertyType = parseTypeNode(tag.typeExpression.type);
             }
 
             const property: JSDocPropertyLikeTagDetails = {

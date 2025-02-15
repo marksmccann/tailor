@@ -1,14 +1,14 @@
 import ts from 'typescript';
 
 import parseJSDoc, { JSDocDetails } from './parseJSDoc';
-import getExportType, { ExportType } from './getExportType';
+import getExportType from './parseModifierArray';
 import parseIdentifier, { IdentifierDetails } from './parseIdentifier';
 
 /**
  * The information derived from a `FunctionDeclaration` object.
  */
 export type FunctionDeclarationDetails = Pick<JSDocDetails, 'description' | 'deprecated'> & {
-    export: ExportType,
+    export: ReturnType<typeof getExportType>,
     name: IdentifierDetails['text'],
     type: string,
     kind: 'NamedFunction' | 'Unknown',
@@ -37,7 +37,6 @@ export default function parseFunctionDeclaration(node: ts.FunctionDeclaration): 
 
     // Export type
     if (modifiers) {
-        console.log(modifiers[1]);
         exportType = getExportType(modifiers);
     }
 

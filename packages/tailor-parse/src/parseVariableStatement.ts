@@ -1,20 +1,16 @@
 import ts from 'typescript';
 
-import parseJSDoc, { JSDocDetails } from './parseJSDoc';
-import getExportType, { ExportType } from './getExportType';
-import getTypeExpression from './getTypeExpression';
-import parseIdentifier, { IdentifierDetails } from './parseIdentifier';
-import parseExpression from './parseExpression';
+// import parseJSDoc, { JSDocDetails } from './parseJSDoc';
+import parseModifierArray from './parseModifierArray';
+// import parseVariableDeclaration, { VariableDeclarationDetails } from './parseVariableDeclaration';
 
 /**
  * The information derived from a `VariableStatement` object.
  */
-export type VariableStatementDetails = Pick<JSDocDetails, 'description' | 'deprecated'> & {
-    export: ExportType,
-    name: IdentifierDetails['text'],
-    type: string,
-    kind: 'Literal' | 'Unknown',
-};
+export type VariableStatementDetails =
+    // Omit<JSDocDetails, ''> &
+    // VariableDeclarationDetails &
+    { export: ReturnType<typeof parseModifierArray>['exportType'] };
 
 /**
  * Parse a `VariableStatement` object to derive relevant details from it.
@@ -23,76 +19,48 @@ export type VariableStatementDetails = Pick<JSDocDetails, 'description' | 'depre
  */
 export default function parseVariableStatement(node: ts.VariableStatement): VariableStatementDetails {
     const { declarationList, modifiers } = node;
-    const [firstDeclaration] = declarationList.declarations;
+    // const [firstDeclaration] = declarationList.declarations;
     // @ts-expect-error - "jsDoc" key is missing from type
-    const jsDocNodeArray = node.jsDoc as ts.NodeArray<ts.JSDoc> | undefined;
-    const isConstant = declarationList.flags === 2;
+    // const jsDocNodeArray = node.jsDoc as ts.NodeArray<ts.JSDoc> | undefined;
+    // const isConstant = declarationList.flags === 2;
 
     // Details to collect
-    let name: VariableStatementDetails['name'] = '';
-    let description: VariableStatementDetails['description'] = '';
-    let deprecated: VariableStatementDetails['deprecated'] = false;
-    let exportType: VariableStatementDetails['export'] = false;
-    let type: VariableStatementDetails['type'] = '';
-    let kind: VariableStatementDetails['kind'] = 'Unknown';
+    // let name: VariableStatementDetails['name'] = { text: '' };
+    // let description: VariableStatementDetails['description'] = '';
+    // let deprecated: VariableStatementDetails['deprecated'] = false;
+    let exportType: VariableStatementDetails['export'] = 'none';
+    // let type: VariableStatementDetails['type'] = { text: '' };
+    // let kind: VariableStatementDetails['kind'] = 'Unknown';
 
     // JSDoc details
-    if (jsDocNodeArray && jsDocNodeArray[0]) {
-        const details = parseJSDoc(jsDocNodeArray[0]);
+    // if (jsDocNodeArray && jsDocNodeArray[0]) {
+    //     const details = parseJSDoc(jsDocNodeArray[0]);
 
-        description = details.description;
-        deprecated = details.deprecated;
-    }
+    //     description = details.description;
+    //     deprecated = details.deprecated;
+    // }
 
     // Export type
     if (modifiers) {
-        console.log(modifiers[1]);
-        exportType = getExportType(modifiers);
+        //     exportType = getExportType(modifiers);
+        // }
+
+        // Primary variable declaration
+        // if (firstDeclaration) {
+        //     const details = parseVariableDeclaration(firstDeclaration, { constant: isConstant });
+
+        //     name = details.name;
+        //     type = details.type;
+        //     kind = details.kind;
+        // }
+
+        return {
+            // name,
+            // description,
+            // deprecated,
+            export: exportType,
+            // kind,
+            // type,
+        };
     }
-
-    // Primary variable declaration
-    if (firstDeclaration) {
-        const { name: variableName, initializer, type: typeAnnotation } = firstDeclaration;
-
-        // Explicit type annotation
-        if (typeAnnotation) {
-            type = getTypeExpression(typeAnnotation);
-        }
-
-        // Left-hand side of declaration
-        if (ts.isIdentifier(variableName)) {
-            const details = parseIdentifier(variableName);
-
-            name = details.text;
-        }
-
-        // Right-hand side of declaration
-        if (initializer) {
-            const details = parseExpression(initializer);
-
-            if (details.kind === 'Literal') {
-                kind = 'Literal';
-            }
-
-            // Derive type from expression if not explicitly annotated
-            if (details.kind === 'Literal' && !type) {
-                if (details.type === 'string') {
-                    type = isConstant ? `'${details.text}'` : 'string';
-                } else if (details.type === 'boolean') {
-                    type = isConstant ? details.text : 'boolean';
-                } else if (details.type === 'number') {
-                    type = isConstant ? details.text : 'number';
-                }
-            }
-        }
-    }
-
-    return {
-        name,
-        description,
-        deprecated,
-        export: exportType,
-        kind,
-        type,
-    };
 }

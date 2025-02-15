@@ -4,6 +4,9 @@ import ts from 'typescript';
  * The information derived from an `Identifier` node.
  */
 export interface IdentifierDetails {
+    /**
+     * The raw text for the identifier.
+     */
     text: string,
 }
 
@@ -14,12 +17,11 @@ export interface IdentifierDetails {
  */
 export default function parseIdentifier(node: ts.Identifier): IdentifierDetails {
     const { escapedText } = node;
+
     let text = '';
 
     if (typeof escapedText === "string") {
         text = escapedText;
-    } else {
-        console.error('Unknown type for identifier "escapedText"');
     }
 
     return { text };
