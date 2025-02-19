@@ -1,6 +1,7 @@
 import { expect, test, describe } from 'vitest';
 
-import parse, { FunctionNode } from '../src/parse';
+import parse from '../src/parse';
+import { FunctionArtifact } from '../src/types';
 import { VariableStatementDetails } from '../src/parseVariableStatement';
 
 test('basic function', () => {
@@ -9,15 +10,15 @@ test('basic function', () => {
             return true;
         }
     `);
-    const node1 = result[0] as FunctionNode;
+    const artifact = result[0] as FunctionArtifact;
 
     expect(result).toHaveLength(1);
-    expect(node1.kind).toBe('Function');
-    expect(node1.name).toStrictEqual('myFunction');
-    expect(node1.export).toBe(false);
-    // expect(result[0].parameters).toHaveLength(0);
-    // expect(result[0].returns).toBe({ type: 'boolean', description: '' });
-    // expect(result[0].type).toBe('() => boolean');
+    expect(artifact.kind).toBe('Function');
+    expect(artifact.name).toStrictEqual('myFunction');
+    expect(artifact.export).toBe('none');
+    expect(artifact.parameters).toHaveLength(0);
+    // expect(artifact.returns).toStrictEqual(expect.objectContaining({ type: '', description: '' }));
+    // expect(artifact.type).toBe('() => boolean');
 });
 
 describe('JSDoc', () => {

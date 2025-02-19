@@ -1,123 +1,97 @@
 import ts from "typescript";
 
-import getTypeExpression from "./getTypeExpression";
+// import getTypeExpression from "./getTypeExpression";
+
+import parseJSDocDeprecatedTag from "./parseJSDocDeprecatedTag";
+import parseJSDocReturnTag, { JSDocReturnTagDetails } from "./parseJSDocReturnTag";
+import parseJSDocPropertyLikeTag, { JSDocPropertyLikeTagDetails } from "./parseJSDocPropertyLikeTag";
 
 /**
- * Details for a `JSDoc` property-like tag (e.g. &#64;property, &#64;argument, &#64;param).
- */
-export interface JSDocPropertyLikeTagDetails {
-    name: string;
-    optional: boolean;
-    type: string;
-    description: string;
-}
-
-/**
- * Details for a `JSDoc` &#64;return tag.
- */
-export interface JSDocReturnTagDetails {
-    type: string;
-    description: string;
-}
-
-/**
- * The comprehensive list of details derived from a `JSDoc` comment block.
+ * The information derived from an `JSDoc` node.
  */
 export interface JSDocDetails {
+    /**
+     * The text of the comment associated with the comment block.
+     */
     description: string;
-    deprecated: boolean | string;
-    parameters: JSDocPropertyLikeTagDetails[];
-    properties: JSDocPropertyLikeTagDetails[];
-    returns: JSDocReturnTagDetails | undefined;
+
+    /**
+     * Whether the deprecated tag is present or not.
+     */
+    deprecated: boolean | string,
+
+    /**
+     * The information for the return statement.
+     */
+    returns: JSDocReturnTagDetails,
+
+    /**
+     * A list of information about the parameters.
+     */
+    parameters: Array<JSDocPropertyLikeTagDetails>
+
+    /**
+     * A list of information about the properties.
+     */
+    properties: Array<JSDocPropertyLikeTagDetails>
 }
 
 /**
- * Parse a `JSDoc` object to derive relevant details from it.
+ * Parse an `JSDoc` object to derive relevant details from.
  * @param node The `JSDoc` node to parse
- * @returns The derived details
+ * @returns The derived detais
  */
 export default function parseJSDoc(node: ts.JSDoc): JSDocDetails {
-    const parameters: JSDocDetails["parameters"] = [];
-    const properties: JSDocDetails["properties"] = [];
-    let deprecated: JSDocDetails["deprecated"] = false;
-    let description: JSDocDetails["description"] = "";
-    let returns: JSDocDetails["returns"];
+    const { comment } = node;
+    const parameters: JSDocDetails['parameters'] = [];
+    const properties: JSDocDetails['properties'] = [];
+    let description: JSDocDetails['description'] = '';
+    let deprecated: JSDocDetails['deprecated'] = false;
+    let returns: JSDocDetails['returns'] = { type: '', description: '' };
 
-    if (typeof node.comment === "string") {
-        description = node.comment;
-    } else if (node.comment !== undefined) {
-        console.error("Unknown JSDocDetails node comment type");
+    if (typeof comment === "string") {
+        description = comment;
+    } else if (comment !== undefined) {
+        // TODO: Parse `ts.NodeArray<ts.JSDocComment>` type
+        console.error("Unknown JSDoc node comment type");
     }
 
     node.tags?.forEach((tag) => {
         if (ts.isJSDocDeprecatedTag(tag)) {
-            if (typeof tag.comment === "string") {
-                deprecated = tag.comment || true;
-            } else if (tag.comment === undefined) {
-                deprecated = true;
+            const details = parseJSDocDeprecatedTag(tag);
+
+            if (details.description) {
+                deprecated = details.description;
             } else {
-                console.error("Unknown JSDocDetails deprecated tag comment type");
+                deprecated = true;
             }
         } else if (ts.isJSDocReturnTag(tag)) {
-            let returnsDescription = "";
-            let returnsType = "";
-
-            if (typeof tag.comment === "string") {
-                returnsDescription = tag.comment;
-            } else if (tag.comment !== undefined) {
-                console.error("Unknown JSDocDetails return tag comment type");
-            }
-
-            if (tag.typeExpression) {
-                returnsType = getTypeExpression(tag.typeExpression.type);
-            }
+            const details = parseJSDocReturnTag(tag);
 
             returns = {
-                description: returnsDescription,
-                type: returnsType,
+                description: details.description,
+                type: details.type,
             };
-        } else if (ts.isJSDocParameterTag(tag) || ts.isJSDocPropertyTag(tag)) {
-            let propertyType = "";
-            let propertyName = "";
-            let propertyDescription = "";
-            const propertyOptional = tag.isBracketed;
+        } else if (ts.isJSDocParameterTag(tag)) {
+            const details = parseJSDocPropertyLikeTag(tag);
 
-            if (typeof tag.comment === "string") {
-                propertyDescription = tag.comment;
-            } else if (typeof tag.comment !== "undefined") {
-                console.error("Unknown JSDocDetails property-like tag comment type");
-            }
+            parameters.push({
+                type: details.type,
+                description: details.description,
+                name: details.name,
+                optional: details.optional,
+            })
+        } else if (ts.isJSDocPropertyTag(tag)) {
+            const details = parseJSDocPropertyLikeTag(tag);
 
-            if (tag.name.kind === ts.SyntaxKind.Identifier) {
-                if (typeof tag?.name.escapedText === "string") {
-                    propertyName = tag.name.escapedText;
-                }
-            }
-
-            if (tag.typeExpression) {
-                propertyType = getTypeExpression(tag.typeExpression.type);
-            }
-
-            const property: JSDocPropertyLikeTagDetails = {
-                type: propertyType,
-                name: propertyName,
-                description: propertyDescription,
-                optional: propertyOptional,
-            };
-
-            if (ts.isJSDocPropertyTag(tag)) {
-                properties.push(property);
-            } else {
-                parameters.push(property);
-            }
+            properties.push({
+                type: details.type,
+                description: details.description,
+                name: details.name,
+                optional: details.optional,
+            })
         }
     });
 
-    return {
-        description,
-        deprecated,
-        returns,
-        parameters,
-        properties,
-    };
+    return { description, deprecated, returns, parameters, properties };
 }

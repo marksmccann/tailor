@@ -1,7 +1,7 @@
 import { expect, test, describe } from 'vitest';
 
 import parse from '../src/parse';
-import { VariableStatementDetails } from '../src/parseVariableStatement';
+import { SimpleArtifact } from '../src/types';
 
 describe('VariableStatement', () => {
     test('literals', () => {
@@ -12,29 +12,29 @@ describe('VariableStatement', () => {
             var numericLiteral = 0;
             let nullLiteral = null;
         `);
-        const stringLiteral: Partial<VariableStatementDetails> = {
+        const stringLiteral: Partial<SimpleArtifact> = {
             name: 'stringLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'string',
         };
-        const trueLiteral: Partial<VariableStatementDetails> = {
+        const trueLiteral: Partial<SimpleArtifact> = {
             name: 'trueLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'boolean',
         };
-        const falseLiteral: Partial<VariableStatementDetails> = {
+        const falseLiteral: Partial<SimpleArtifact> = {
             name: 'falseLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'boolean',
         };
-        const numericLiteral: Partial<VariableStatementDetails> = {
+        const numericLiteral: Partial<SimpleArtifact> = {
             name: 'numericLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'number',
         };
-        const nullLiteral: Partial<VariableStatementDetails> = {
+        const nullLiteral: Partial<SimpleArtifact> = {
             name: 'nullLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'null',
         };
 
@@ -54,29 +54,29 @@ describe('VariableStatement', () => {
             const numericConstant = 0;
             const nullConstant = null;
         `);
-        const stringConstant: Partial<VariableStatementDetails> = {
+        const stringConstant: Partial<SimpleArtifact> = {
             name: 'stringConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: "'Hello World!'",
         };
-        const trueConstant: Partial<VariableStatementDetails> = {
+        const trueConstant: Partial<SimpleArtifact> = {
             name: 'trueConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: "true",
         };
-        const falseConstant: Partial<VariableStatementDetails> = {
+        const falseConstant: Partial<SimpleArtifact> = {
             name: 'falseConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'false',
         };
-        const numericConstant: Partial<VariableStatementDetails> = {
+        const numericConstant: Partial<SimpleArtifact> = {
             name: 'numericConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: '0',
         };
-        const nullConstant: Partial<VariableStatementDetails> = {
+        const nullConstant: Partial<SimpleArtifact> = {
             name: 'nullConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'null',
         };
 
@@ -97,34 +97,34 @@ describe('VariableStatement', () => {
             let booleanLiteral: false = false;
             const booleanConstant: boolean = true;
         `);
-        const stringLiteral: Partial<VariableStatementDetails> = {
+        const stringLiteral: Partial<SimpleArtifact> = {
             name: 'stringLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: "'Hello World!'",
         };
-        const stringConstant: Partial<VariableStatementDetails> = {
+        const stringConstant: Partial<SimpleArtifact> = {
             name: 'stringConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'string',
         };
-        const numberLiteral: Partial<VariableStatementDetails> = {
+        const numberLiteral: Partial<SimpleArtifact> = {
             name: 'numberLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: "0",
         };
-        const numberConstant: Partial<VariableStatementDetails> = {
+        const numberConstant: Partial<SimpleArtifact> = {
             name: 'numberConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'number',
         };
-        const booleanLiteral: Partial<VariableStatementDetails> = {
+        const booleanLiteral: Partial<SimpleArtifact> = {
             name: 'booleanLiteral',
-            kind: 'Literal',
+            kind: 'Simple',
             type: "false",
         };
-        const booleanConstant: Partial<VariableStatementDetails> = {
+        const booleanConstant: Partial<SimpleArtifact> = {
             name: 'booleanConstant',
-            kind: 'Literal',
+            kind: 'Simple',
             type: 'boolean',
         };
 
@@ -143,11 +143,11 @@ describe('VariableStatement', () => {
                 export let namedVariable = true;
                 export const namedConstant = true;
             `);
-            const namedVariable: Partial<VariableStatementDetails> = {
+            const namedVariable: Partial<SimpleArtifact> = {
                 name: 'namedVariable',
                 export: 'named',
             };
-            const namedConstant: Partial<VariableStatementDetails> = {
+            const namedConstant: Partial<SimpleArtifact> = {
                 name: 'namedConstant',
                 export: 'named',
             };
@@ -162,13 +162,13 @@ describe('VariableStatement', () => {
                 let namedVariable = true;
                 const namedConstant = true;
             `);
-            const namedVariable: Partial<VariableStatementDetails> = {
+            const namedVariable: Partial<SimpleArtifact> = {
                 name: 'namedVariable',
-                export: false,
+                export: 'none',
             };
-            const namedConstant: Partial<VariableStatementDetails> = {
+            const namedConstant: Partial<SimpleArtifact> = {
                 name: 'namedConstant',
-                export: false,
+                export: 'none',
             };
 
             expect(result).toHaveLength(2);
@@ -181,11 +181,11 @@ describe('VariableStatement', () => {
         //         export default let defaultVariable = true;
         //         export default const defaultConstant = true;
         //     `);
-        //     const defaultVariable: Partial<VariableStatementDetails> = {
+        //     const defaultVariable: Partial<SimpleArtifact> = {
         //         name: 'defaultVariable',
         //         export: 'default',
         //     };
-        //     const defaultConstant: Partial<VariableStatementDetails> = {
+        //     const defaultConstant: Partial<SimpleArtifact> = {
         //         name: 'defaultConstant',
         //         export: 'default',
         //     };
@@ -204,11 +204,11 @@ describe('VariableStatement', () => {
                 /* No description */
                 const noDescription = '';
             `);
-            const description: Partial<VariableStatementDetails> = {
+            const description: Partial<SimpleArtifact> = {
                 name: 'description',
                 description: 'Description ...',
             };
-            const noDescription: Partial<VariableStatementDetails> = {
+            const noDescription: Partial<SimpleArtifact> = {
                 name: 'noDescription',
                 description: '',
             };
@@ -227,15 +227,15 @@ describe('VariableStatement', () => {
                 /** Not deprecated */
                 var notDeprecated = '';
             `);
-            const deprecatedTag: Partial<VariableStatementDetails> = {
+            const deprecatedTag: Partial<SimpleArtifact> = {
                 name: 'deprecatedTag',
                 deprecated: true,
             };
-            const deprecatedTagWithDescription: Partial<VariableStatementDetails> = {
+            const deprecatedTagWithDescription: Partial<SimpleArtifact> = {
                 name: 'deprecatedTagWithDescription',
                 deprecated: 'Description ...',
             };
-            const notDeprecated: Partial<VariableStatementDetails> = {
+            const notDeprecated: Partial<SimpleArtifact> = {
                 name: 'notDeprecated',
                 deprecated: false,
             };

@@ -1,73 +1,58 @@
 
-/* eslint-disable */
-
 import ts from "typescript";
 
-// import parseJSDoc from "./parseJSDoc";
-import { ExportType } from "./getExportType";
+import walk from './walk';
+import { Artifact } from './types';
 import parseVariableStatement from "./parseVariableStatement";
 import parseFunctionDeclaration from "./parseFunctionDeclaration";
 
-export interface NodeBase<T> {
-    readonly kind: T;
-    readonly name: string;
-    readonly type: string;
-    readonly export: ExportType;
-}
-
-export interface FunctionNode extends NodeBase<'Function'> { }
-
-export interface LiteralNode extends NodeBase<'Literal'> { }
-
-export type DocNode = LiteralNode | FunctionNode | {
-    readonly kind: 'Unknown';
-}
-
 /**
- * Parse the source code to extract relevant documentation nodes.
- * @param sourceText The source code to parse
- * @returns The list of nodes parsed from the source code
+ * Extract organized documentation information for each identifiable
+ * artifact found within a JavaScript or TypeScript file.
+ * @param sourceText The raw source code from the file
+ * @returns The list of artifacts containing documentation information
  */
-export default function parse(sourceText: string): DocNode[] {
-    const result: DocNode[] = [];
-    const sourceFile = ts.createSourceFile(
-        '',
-        sourceText,
-        ts.ScriptTarget.ES2015,
-        true
+export default function parse(sourceText: string): Artifact[] {
+    const artifacts: Artifact[] = [];
+
+    walk(
+        ts.createSourceFile(
+            '',
+            sourceText,
+            ts.ScriptTarget.ES2015,
+            true
+        ),
+        {
+            FunctionDeclaration(node) {
+                const details = parseFunctionDeclaration(node);
+
+                artifacts.push({
+                    kind: 'Function',
+                    name: details.name,
+                    export: details.exportType,
+                    type: details.type,
+                    description: details.description,
+                    deprecated: details.deprecated,
+                    parameters: details.parameters,
+                    returns: details.returns,
+                });
+            },
+            VariableStatement(node) {
+                const details = parseVariableStatement(node);
+
+                if (details.kind === 'literal') {
+                    artifacts.push({
+                        kind: 'Simple',
+                        name: details.name,
+                        export: details.exportType,
+                        type: details.type,
+                        description: details.description,
+                        deprecated: details.deprecated,
+                    });
+                }
+            }
+        },
     );
 
-    ts.forEachChild(sourceFile, (node) => {
-        let DocNode: DocNode = { kind: 'Unknown' };
-        let nodeType: string = 'Unknown';
-
-        // Ignore irrelevant node types
-        if (node.kind === ts.SyntaxKind.EndOfFileToken || ts.isEmptyStatement(node)) {
-            return;
-        }
-
-        if (ts.isFunctionDeclaration(node)) {
-            const { kind, ...rest } = parseFunctionDeclaration(node);
-
-            if (kind === 'NamedFunction') {
-                DocNode = { ...rest, kind: 'Function' };
-            }
-        } else if (ts.isVariableStatement(node)) {
-            const { kind, ...rest } = parseVariableStatement(node);
-
-            if (kind === 'Literal') {
-                DocNode = { ...rest, kind: 'Literal' };
-            }
-        }
-
-        if (DocNode.kind === 'Unknown') {
-            console.error(`Failed to parse node of type "${nodeType}".`);
-            console.log(node);
-        }
-
-
-        result.push(DocNode);
-    });
-
-    return result;
+    return artifacts;
 }

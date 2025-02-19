@@ -1,20 +1,33 @@
 import ts from 'typescript';
 
 import parseJSDoc, { JSDocDetails } from './parseJSDoc';
-import getExportType, { ExportType } from './getExportType';
-import getTypeExpression from './getTypeExpression';
-import parseIdentifier, { IdentifierDetails } from './parseIdentifier';
+import parseTypeNode from './parseTypeNode';
+import parseIdentifier from './parseIdentifier';
 import parseExpression from './parseExpression';
+import parseModifierArray, { ModifierArrayDetails } from './parseModifierArray';
 
 /**
  * The information derived from a `VariableStatement` object.
  */
-export type VariableStatementDetails = Pick<JSDocDetails, 'description' | 'deprecated'> & {
-    export: ExportType,
-    name: IdentifierDetails['text'],
-    type: string,
-    kind: 'Literal' | 'Unknown',
-};
+export type VariableStatementDetails =
+    Pick<JSDocDetails, 'description' | 'deprecated'> &
+    Pick<ModifierArrayDetails, 'exportType'> &
+    {
+        /**
+         * The kind of variable being defined.
+         */
+        kind: 'literal' | 'unknown',
+
+        /**
+         * The name of the function. Will be an empty string if anonymous.
+         */
+        name: string
+
+        /**
+         * The expression for the function's type as a string.
+         */
+        type: string,
+    };
 
 /**
  * Parse a `VariableStatement` object to derive relevant details from it.
@@ -32,11 +45,10 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
     let name: VariableStatementDetails['name'] = '';
     let description: VariableStatementDetails['description'] = '';
     let deprecated: VariableStatementDetails['deprecated'] = false;
-    let exportType: VariableStatementDetails['export'] = false;
+    let exportType: VariableStatementDetails['exportType'] = 'none';
     let type: VariableStatementDetails['type'] = '';
-    let kind: VariableStatementDetails['kind'] = 'Unknown';
+    let kind: VariableStatementDetails['kind'] = 'unknown';
 
-    // JSDoc details
     if (jsDocNodeArray && jsDocNodeArray[0]) {
         const details = parseJSDoc(jsDocNodeArray[0]);
 
@@ -44,22 +56,21 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
         deprecated = details.deprecated;
     }
 
-    // Export type
     if (modifiers) {
-        console.log(modifiers[1]);
-        exportType = getExportType(modifiers);
+        const details = parseModifierArray(modifiers);
+
+        exportType = details.exportType;
     }
 
-    // Primary variable declaration
     if (firstDeclaration) {
         const { name: variableName, initializer, type: typeAnnotation } = firstDeclaration;
 
-        // Explicit type annotation
         if (typeAnnotation) {
-            type = getTypeExpression(typeAnnotation);
+            const details = parseTypeNode(typeAnnotation);
+
+            type = details.type;
         }
 
-        // Left-hand side of declaration
         if (ts.isIdentifier(variableName)) {
             const details = parseIdentifier(variableName);
 
@@ -70,12 +81,12 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
         if (initializer) {
             const details = parseExpression(initializer);
 
-            if (details.kind === 'Literal') {
-                kind = 'Literal';
+            if (details.kind === 'literal') {
+                kind = 'literal';
             }
 
             // Derive type from expression if not explicitly annotated
-            if (details.kind === 'Literal' && !type) {
+            if (details.kind === 'literal' && !type) {
                 if (details.type === 'string') {
                     type = isConstant ? `'${details.text}'` : 'string';
                 } else if (details.type === 'boolean') {
@@ -91,7 +102,7 @@ export default function parseVariableStatement(node: ts.VariableStatement): Vari
         name,
         description,
         deprecated,
-        export: exportType,
+        exportType,
         kind,
         type,
     };
